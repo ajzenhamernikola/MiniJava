@@ -7,7 +7,7 @@ public class OpExp extends Exp {
     public Exp exp2;
     public Binop binop;
 
-    public OpExp(Exp exp1, Exp exp2, Binop binop) {
+    public OpExp(Exp exp1, Binop binop, Exp exp2) {
         this.exp1 = exp1;
         this.exp2 = exp2;
         this.binop = binop;
