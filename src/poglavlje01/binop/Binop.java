@@ -8,9 +8,9 @@ public class Binop {
         Div
     }
 
-    public Op op;
+    public Binop.Op op;
 
-    public Binop(Op op) {
+    public Binop(Binop.Op op) {
         this.op = op;
     }
 }

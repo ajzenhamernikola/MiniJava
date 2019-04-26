@@ -12,13 +12,14 @@ import poglavlje01.stm.CompoundStm;
 import poglavlje01.stm.PrintStm;
 import poglavlje01.stm.Stm;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-
 public class Main {
 
     public static void main(String[] args) {
+
+        // a := 5 + 3 ;
+        // b := ( print ( a , a - 1 ) , 10 * a ) ;
+        // print ( b )
+
         Stm prog =
             new CompoundStm(
                 new AssignStm(
@@ -60,24 +61,12 @@ public class Main {
                 )
             );
 
-        ArrayList<String> allowedMethods = new ArrayList<>();
-        allowedMethods.add("maxargs");
-        allowedMethods.add("interpret");
-
-        Method[] methods = Stm.class.getMethods();
-        for (Method met : methods)
-        {
-            if (allowedMethods.contains(met.getName()))
-            {
-                System.out.println("Invoking method: " + met.getName());
-                try {
-                    Object ret = met.invoke(prog);
-
-                    System.out.println("\tReturn value: " + ret.toString());
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
+//        System.out.println(prog.maxargs());
+        try {
+//            System.out.println(prog.interpStm(null));
+            prog.interpStm(null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
