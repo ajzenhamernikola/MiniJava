@@ -14,6 +14,7 @@ import poglavlje01.Stm.Stm;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -59,14 +60,23 @@ public class Main {
                 )
             );
 
+        ArrayList<String> allowedMethods = new ArrayList<>();
+        allowedMethods.add("maxargs");
+        allowedMethods.add("interpret");
+
         Method[] methods = Stm.class.getMethods();
         for (Method met : methods)
         {
-            System.out.println("Invoking method: " + met.getName());
-            try {
-                met.invoke(prog);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+            if (allowedMethods.contains(met.getName()))
+            {
+                System.out.println("Invoking method: " + met.getName());
+                try {
+                    Object ret = met.invoke(prog);
+
+                    System.out.println("\tReturn value: " + ret.toString());
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
