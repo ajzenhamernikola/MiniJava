@@ -1,4 +1,4 @@
-package poglavlje01.Binop;
+package poglavlje01.binop;
 
 public class Binop {
     public enum Op {

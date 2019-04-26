@@ -1,16 +1,16 @@
 package poglavlje01;
 
-import poglavlje01.Binop.Binop;
-import poglavlje01.Exp.EseqExp;
-import poglavlje01.Exp.IdExp;
-import poglavlje01.Exp.NumExp;
-import poglavlje01.Exp.OpExp;
-import poglavlje01.ExpList.LastExpList;
-import poglavlje01.ExpList.PairExpList;
-import poglavlje01.Stm.AssignStm;
-import poglavlje01.Stm.CompoundStm;
-import poglavlje01.Stm.PrintStm;
-import poglavlje01.Stm.Stm;
+import poglavlje01.binop.Binop;
+import poglavlje01.exp.EseqExp;
+import poglavlje01.exp.IdExp;
+import poglavlje01.exp.NumExp;
+import poglavlje01.exp.OpExp;
+import poglavlje01.expList.LastExpList;
+import poglavlje01.expList.PairExpList;
+import poglavlje01.stm.AssignStm;
+import poglavlje01.stm.CompoundStm;
+import poglavlje01.stm.PrintStm;
+import poglavlje01.stm.Stm;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

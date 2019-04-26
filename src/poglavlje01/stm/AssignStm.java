@@ -1,6 +1,6 @@
-package poglavlje01.Stm;
+package poglavlje01.stm;
 
-import poglavlje01.Exp.Exp;
+import poglavlje01.exp.Exp;
 
 public class AssignStm extends Stm {
     public String id;

@@ -1,4 +1,4 @@
-package poglavlje01.Exp;
+package poglavlje01.exp;
 
 public class IdExp extends Exp {
     public String id;

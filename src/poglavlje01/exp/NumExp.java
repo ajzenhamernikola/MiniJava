@@ -1,4 +1,4 @@
-package poglavlje01.Exp;
+package poglavlje01.exp;
 
 public class NumExp extends Exp {
     public int num;

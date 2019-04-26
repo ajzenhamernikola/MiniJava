@@ -1,6 +1,6 @@
-package poglavlje01.Exp;
+package poglavlje01.exp;
 
-import poglavlje01.Stm.Stm;
+import poglavlje01.stm.Stm;
 
 public class EseqExp extends Exp {
     public Stm stm;

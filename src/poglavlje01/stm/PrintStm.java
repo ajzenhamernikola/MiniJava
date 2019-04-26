@@ -1,6 +1,6 @@
-package poglavlje01.Stm;
+package poglavlje01.stm;
 
-import poglavlje01.ExpList.ExpList;
+import poglavlje01.expList.ExpList;
 
 public class PrintStm extends Stm {
     public ExpList list;

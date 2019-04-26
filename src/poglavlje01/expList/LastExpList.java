@@ -1,6 +1,6 @@
-package poglavlje01.ExpList;
+package poglavlje01.expList;
 
-import poglavlje01.Exp.Exp;
+import poglavlje01.exp.Exp;
 
 public class LastExpList extends ExpList {
     public Exp exp;

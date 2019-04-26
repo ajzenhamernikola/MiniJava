@@ -1,4 +1,4 @@
-package poglavlje01.Stm;
+package poglavlje01.stm;
 
 public class CompoundStm extends Stm {
     public Stm stm1;
