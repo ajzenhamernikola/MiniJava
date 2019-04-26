@@ -6,4 +6,9 @@ public class IdExp extends Exp {
     public IdExp(String id) {
         this.id = id;
     }
+
+    @Override
+    public int maxargs() {
+        return 1;
+    }
 }

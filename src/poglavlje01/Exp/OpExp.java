@@ -12,4 +12,9 @@ public class OpExp extends Exp {
         this.exp2 = exp2;
         this.binop = binop;
     }
+
+    @Override
+    public int maxargs() {
+        return 1;
+    }
 }

@@ -10,4 +10,9 @@ public class AssignStm extends Stm {
         this.id = id;
         this.exp = exp;
     }
+
+    @Override
+    public int maxargs() {
+        return exp.maxargs();
+    }
 }

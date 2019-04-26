@@ -8,4 +8,9 @@ public class PrintStm extends Stm {
     public PrintStm(ExpList list) {
         this.list = list;
     }
+
+    @Override
+    public int maxargs() {
+        return list.maxargs();
+    }
 }

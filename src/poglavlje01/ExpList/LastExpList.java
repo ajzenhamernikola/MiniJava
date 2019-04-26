@@ -8,4 +8,9 @@ public class LastExpList extends ExpList {
     public LastExpList(Exp exp) {
         this.exp = exp;
     }
+
+    @Override
+    public int maxargs() {
+        return exp.maxargs();
+    }
 }

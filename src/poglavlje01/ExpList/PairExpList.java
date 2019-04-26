@@ -10,4 +10,9 @@ public class PairExpList extends ExpList {
         this.head = head;
         this.tail = tail;
     }
+
+    @Override
+    public int maxargs() {
+        return head.maxargs() + tail.maxargs();
+    }
 }
