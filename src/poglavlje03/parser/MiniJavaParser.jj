@@ -1,0 +1,228 @@
+PARSER_BEGIN(MiniJavaParser)
+
+package poglavlje03.parser;
+
+public class MiniJavaParser {
+
+}
+PARSER_END(MiniJavaParser)
+
+// LEXER
+
+TOKEN : {
+    // Keywords
+    <CLASS: "class">
+    | <PUBLIC: "public">
+    | <STATIC: "static">
+    | <VOID: "void">
+    | <MAIN: "main">
+    | <STRING: "String">
+    | <EXTENDS: "extends">
+    | <RETURN: "return">
+    | <INT: "int">
+    | <BOOLEAN: "boolean">
+    | <IF: "if">
+    | <ELSE: "else">
+    | <WHILE: "while">
+    | <PRINT: "System.out.println">
+    | <TRUE: "true">
+    | <FALSE: "false">
+    | <THIS: "this">
+    | <NEW: "new">
+    | <LENGTH: "length">
+    | <PACKAGEDECL: "package">
+    // Punctuation
+    | <SEMICOLON: ";">
+    | <DOT: ".">
+    | <COMMA: ",">
+    | <LPAREN: "(">
+    | <RPAREN: ")">
+    | <LBRACE: "{">
+    | <RBRACE: "}">
+    | <LSQUARE: "[">
+    | <RSQUARE: "]">
+    // Helpers
+    | <#LETTER: ["a"-"z","A"-"Z"]>
+    | <#DIGIT: ["0"-"9"]>
+    // Constructs
+    | <ID: <LETTER>(<LETTER>|<DIGIT>|"_")*>
+    | <OP: "+"|"-"|"*"|"/"|"&&"|"<">
+    | <UNARY: "!">
+    | <ASSIGN: "=">
+    | <INTEGER_LITERAL: (<DIGIT>)+ >
+}
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+|
+  <"/**" ~["/"]> { input_stream.backup(1); } : IN_FORMAL_COMMENT
+|
+  "/*" : IN_MULTI_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <FORMAL_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+SKIP : {
+      " "
+    | "\t"
+    | "\n"
+    | "\r"
+}
+
+// PARSER
+
+void Parse():
+{}
+{
+    Program() <EOF>
+}
+
+void Program():
+{}
+{
+    PackageDecl() <SEMICOLON>
+
+    MainClass()
+    (ClassDecl())*
+}
+
+void PackageDecl():
+{}
+{
+    <PACKAGEDECL> <ID>
+}
+
+void MainClass():
+{}
+{
+    <CLASS> <ID> <LBRACE>
+        <PUBLIC> <STATIC> <VOID> <MAIN> <LPAREN> <STRING> <LSQUARE> <RSQUARE> <ID> <RPAREN> <LBRACE>
+            Statement()
+        <RBRACE>
+    <RBRACE>
+}
+
+void ClassDecl():
+{}
+{
+    (LOOKAHEAD(<CLASS> <ID> <LBRACE>) <CLASS> <ID>
+    | LOOKAHEAD(<CLASS> <ID> <EXTENDS>) <CLASS> <ID> <EXTENDS> <ID>) <LBRACE>
+        (LOOKAHEAD(Type()) VarDecl())*
+        (LOOKAHEAD(<PUBLIC>) MethodDecl())*
+    <RBRACE>
+}
+
+void VarDecl():
+{}
+{
+    Type() <ID> <SEMICOLON>
+}
+
+void MethodDecl():
+{}
+{
+    <PUBLIC> Type() <ID> <LPAREN> FormalList() <RPAREN> <LBRACE>
+        (VarDecl())* (Statement())*
+
+        Return()
+    <RBRACE>
+}
+
+void Return():
+{}
+{
+    <RETURN> <ID> <SEMICOLON>
+}
+
+void FormalList():
+{}
+{
+    (Type() <ID> (LOOKAHEAD(<COMMA>) FormalRest())*)?
+}
+
+void FormalRest():
+{}
+{
+    <COMMA> Type() <ID>
+}
+
+void Type():
+{}
+{
+    LOOKAHEAD(<INT> <LSQUARE>) <INT> <LSQUARE> <RSQUARE>
+    | <INT>
+    | <BOOLEAN>
+}
+
+void Statement():
+{}
+{
+    <LBRACE> Statement() <RBRACE>
+    | <IF> <LPAREN> Exp() <RPAREN> Statement() <ELSE> Statement()
+    | <WHILE> <LPAREN> Exp() <RPAREN> Statement()
+    | <PRINT> <LPAREN> Exp() <RPAREN> <SEMICOLON>
+    | LOOKAHEAD(<ID> <ASSIGN>) <ID> <ASSIGN> Exp() <SEMICOLON>
+    | <ID> <LSQUARE> Exp() <RSQUARE> Exp() <SEMICOLON>
+}
+
+void Exp():
+{}
+{
+    <INTEGER_LITERAL> ExpPrime()
+    | <TRUE> ExpPrime()
+    | <FALSE> ExpPrime()
+    | <ID> ExpPrime()
+    | <THIS> ExpPrime()
+    | LOOKAHEAD(<NEW> <INT>) <NEW> <INT> <LSQUARE> Exp() <RSQUARE> ExpPrime()
+    | <NEW> <ID> <LPAREN> <RPAREN> ExpPrime()
+    | <UNARY> Exp() ExpPrime()
+    | <LPAREN> Exp() <RPAREN> ExpPrime()
+}
+
+void ExpPrime():
+{}
+{
+(
+    <OP> Exp() ExpPrime()
+    | <LSQUARE> Exp() <RSQUARE> ExpPrime()
+    | LOOKAHEAD(<DOT> <LENGTH>) <DOT> <LENGTH> ExpPrime()
+    | <DOT> <ID> <LPAREN> ExpList() <RPAREN> ExpPrime()
+)?
+}
+
+void ExpList():
+{}
+{
+(
+    Exp() (ExpRest())*
+)?
+}
+
+void ExpRest():
+{}
+{
+    <COMMA> Exp()
+}
