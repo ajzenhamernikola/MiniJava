@@ -3,9 +3,7 @@ package poglavlje02;
 import poglavlje02.parser.MiniJavaParser;
 import poglavlje02.parser.ParseException;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,7 +23,7 @@ public class Main {
             assert testFile.isPresent();
 
             new MiniJavaParser(new FileInputStream(testFile.get().toFile())).Goal();
-            System.out.println("Lexical analysis successfull");
+            System.out.println("Lexical analysis successful");
         }
         catch (ParseException e) {
             System.out.println("Lexer Error : \n"+ e.toString());
