@@ -2,3 +2,5 @@
 out
 
 MiniJava.iml
+
+src/poglavlje02/parser/*.java

@@ -1,0 +1,97 @@
+PARSER_BEGIN(MiniJavaParser)
+
+package poglavlje02.parser;
+
+public class MiniJavaParser {
+
+}
+PARSER_END(MiniJavaParser)
+
+// Insert a specification of a lexical analysis here.
+TOKEN : {
+    < CLASS: "class" >
+    | < PUBLIC: "public" >
+    | < STATIC: "static" >
+    | < VOID: "void" >
+    | < MAIN: "main" >
+    | < STRING: "String" >
+    | < EXTENDS: "extends" >
+    | < RETURN: "return" >
+    | < INT: "int" >
+    | < BOOLEAN: "boolean" >
+    | < IF: "if" >
+    | < ELSE: "else" >
+    | < WHILE: "while" >
+    | < PRINT: "System.out.println" >
+    | < LENGTH: "length" >
+    | < TRUE: "true" >
+    | < FALSE: "false" >
+    | < THIS: "this" >
+    | < NEW: "new" >
+    | < #LETTER: ["a"-"z"]|["A"-"Z"] >
+    | < #DIGIT: ["0"-"9"] >
+    | < IDENTIFIER: <LETTER>(<LETTER>|<DIGIT>|"_")* >
+    | < INTEGER_LITERAL: (<DIGIT>)+ >
+}
+
+SKIP : {
+    " "
+    | "\t"
+    | "\n"
+    | "\r"
+    | "\f"
+}
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+|
+  <"/**" ~["/"]> { input_stream.backup(1); } : IN_FORMAL_COMMENT
+|
+  "/*" : IN_MULTI_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <FORMAL_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+// The following is a simple grammar that will allow you
+// to test the generated lexer.
+
+void Goal() :
+{}
+{
+  ( MiniJavaToken() )*
+  <EOF>
+}
+
+void MiniJavaToken():
+{}
+{
+  "class"  |  <IDENTIFIER> | "{" | "public" | "static" | "void" |
+  "main" | "(" | "String"  | "[" | "]" | ")" | "}" | "extends" | ";"
+  | "return" | "," | "int" | "boolean" | "=" | "if" | "else" | "while"
+  | "System.out.println" | "&&" | "<" | "+" | "-" | "*" | "." |
+  "length" | <INTEGER_LITERAL> | "true" | "false" | "this" | "new" |
+  "!"
+}
