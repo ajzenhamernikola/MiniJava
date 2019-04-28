@@ -9,7 +9,7 @@ public abstract class SyntaxList<T> {
         list = new Vector();
     }
 
-    public void addElement(T n) {
+    public void add(T n) {
         list.addElement(n);
     }
 

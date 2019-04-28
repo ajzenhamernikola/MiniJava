@@ -59,7 +59,8 @@ TOKEN : {
     | <MINUS: "-">
     | <TIMES: "*">
     | <DIV: "/">
-    | <UNARY: "!">
+    | <LESSTHAN: "<">
+    | <NOT: "!">
     | <ASSIGN: "=">
     | <INTEGER_LITERAL: (<DIGIT>)+ >
 }
@@ -234,14 +235,14 @@ MethodDecl MethodDecl():
     FormalList args;
     VarDeclList v;
     StatementList s;
-    Identifier returnVal;
+    Exp returnVal;
 }
 {
     <PUBLIC> returnType=Type() methodName=Identifier() <LPAREN> args=FormalList() <RPAREN> <LBRACE>
         v=VarDeclList()
         s=StatementList()
 
-        <RETURN> returnVal=Identifier() <SEMICOLON>
+        <RETURN> returnVal=Exp() <SEMICOLON>
     <RBRACE> { return new MethodDecl(returnType, methodName, args, v, s, returnVal); }
 }
 
@@ -251,7 +252,7 @@ FormalList FormalList():
     Formal f;
 }
 {
-    (f=Formal() { fList.add(f); } (<COMMA> f=Formal() { fList.add(f); })*)?
+    (f=Formal() { fList.add(f); } (<COMMA> f=Formal() { fList.add(f); })*)? { return fList; }
 }
 
 Formal Formal():
@@ -401,7 +402,7 @@ Exp IntegerLiteral():
     Token t;
 }
 {
-    t=<INTEGER_LITERAL> { return new IntegerLiteral(t.image); }
+    t=<INTEGER_LITERAL> { return new IntegerLiteral(Integer.parseInt(t.image)); }
 }
 
 Exp True():
@@ -443,7 +444,7 @@ Exp NewObject():
     Identifier className;
 }
 {
-    <NEW> className=Identifier() <LPAREN> <RPAREN> { return new Newobject(className); }
+    <NEW> className=Identifier() <LPAREN> <RPAREN> { return new NewObject(className); }
 }
 
 Exp Not():
@@ -451,7 +452,7 @@ Exp Not():
     Exp e;
 }
 {
-    <UNARY> e=Exp() { return new Not(e); }
+    <NOT> e=Exp() { return new Not(e); }
 }
 
 Exp ParentExp():
@@ -464,7 +465,7 @@ Exp ParentExp():
 
 Exp ExpPrime(Exp e1):
 {
-    Exp e2;
+    Exp e2 = null;
     Exp e3 = null;
 }
 {
@@ -472,6 +473,7 @@ Exp ExpPrime(Exp e1):
     | e2=ExpPrimeMinus(e1) e3=ExpPrime(e2)
     | e2=ExpPrimeTimes(e1) e3=ExpPrime(e2)
     | e2=ExpPrimeDiv(e1) e3=ExpPrime(e2)
+    | e2=ExpPrimeLessThan(e1) e3=ExpPrime(e2)
     | e2=ExpPrimeArrayLookup(e1) e3=ExpPrime(e2)
     | LOOKAHEAD(<DOT> <LENGTH>) e2=ExpPrimeArrayLength(e1) e3=ExpPrime(e2)
     | e2=ExpPrimeCall(e1) e3=ExpPrime(e2))?
@@ -514,6 +516,14 @@ Exp ExpPrimeDiv(Exp e1):
 }
 {
     <DIV> e2=Exp() { return new Div(e1, e2); }
+}
+
+Exp ExpPrimeLessThan(Exp e1):
+{
+    Exp e2;
+}
+{
+    <LESSTHAN> e2=Exp() { return new LessThan(e1, e2); }
 }
 
 Exp ExpPrimeArrayLookup(Exp e1):
