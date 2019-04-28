@@ -1,3 +1,5 @@
+// vim: syntax=java
+
 PARSER_BEGIN(MiniJavaParser)
 
 package poglavlje03.parser;
