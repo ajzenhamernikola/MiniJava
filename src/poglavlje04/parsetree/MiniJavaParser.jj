@@ -482,7 +482,11 @@ Exp ExpPrime(Exp e1):
         {
             return e3;
         }
-        return e2;
+        if (null != e2)
+        {
+            return e2;
+        }
+        return e1;
     }
 }
 
