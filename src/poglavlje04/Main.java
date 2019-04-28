@@ -17,7 +17,7 @@ public class Main {
             Optional<Path> testFile =
                     Files.walk(Paths.get(System.getProperty("user.dir")))
                             .filter(Files::isRegularFile)
-                            .filter(f -> f.getFileName().toString().contains("TestFac.java"))
+                            .filter(f -> f.getFileName().toString().contains("TestFac2.java"))
                             .findFirst();
 
             assert testFile.isPresent();

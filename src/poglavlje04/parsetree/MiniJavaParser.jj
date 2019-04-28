@@ -207,7 +207,7 @@ VarDeclList VarDeclList():
     VarDecl v;
 }
 {
-    (LOOKAHEAD(Type()) v = VarDecl() { vList.add(v); } )* { return vList; }
+    (LOOKAHEAD(2) v = VarDecl() { vList.add(v); } )* { return vList; }
 }
 
 VarDecl VarDecl():
@@ -269,9 +269,10 @@ Type Type():
     Type t;
 }
 {
-    (LOOKAHEAD(<INT> <LSQUARE>) t=IntArrayType()
+    (LOOKAHEAD(2) t=IntArrayType()
      | t=IntType()
-     | t=BooleanType()) { return t; }
+     | t=BooleanType()
+     | t=IdentifierType()) { return t; }
 }
 
 Type IntArrayType():
@@ -290,6 +291,14 @@ Type BooleanType():
 {}
 {
     <BOOLEAN> { return new BooleanType(); }
+}
+
+Type IdentifierType():
+{
+    Token t;
+}
+{
+    t=<ID> { return new IdentifierType(t.image); }
 }
 
 StatementList StatementList():
