@@ -14,6 +14,17 @@ public class Symbol {
         return this.name;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (null == obj) {
+            return false;
+        }
+        if (!(obj instanceof Symbol)) {
+            return false;
+        }
+        return this.toString().equals(obj.toString());
+    }
+
     public static Symbol symbol(String n) {
         String u = n.intern();
         Symbol s = (Symbol)dict.get(u);
