@@ -3,6 +3,5 @@ out
 
 MiniJava.iml
 
-src/poglavlje02/parser/*.java
-src/poglavlje03/parser/*.java
-src/poglavlje04/parsetree/*.java
+src/*/parser/*.java
+src/*/parsetree/*.java
