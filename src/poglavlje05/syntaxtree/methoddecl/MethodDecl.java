@@ -6,6 +6,7 @@ import poglavlje05.syntaxtree.formal.FormalList;
 import poglavlje05.syntaxtree.statement.StatementList;
 import poglavlje05.syntaxtree.type.Type;
 import poglavlje05.syntaxtree.vardecl.VarDeclList;
+import poglavlje05.syntaxtree.visitor.TypeVisitor;
 import poglavlje05.syntaxtree.visitor.Visitor;
 
 public class MethodDecl {
@@ -27,5 +28,9 @@ public class MethodDecl {
 
     public void accept(Visitor v) {
         v.visit(this);
+    }
+
+    public Type accept(TypeVisitor v) {
+        return v.visit(this);
     }
 }

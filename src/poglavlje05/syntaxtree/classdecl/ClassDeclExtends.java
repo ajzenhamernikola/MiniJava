@@ -2,7 +2,9 @@ package poglavlje05.syntaxtree.classdecl;
 
 import poglavlje05.syntaxtree.Identifier;
 import poglavlje05.syntaxtree.methoddecl.MethodDeclList;
+import poglavlje05.syntaxtree.type.Type;
 import poglavlje05.syntaxtree.vardecl.VarDeclList;
+import poglavlje05.syntaxtree.visitor.TypeVisitor;
 import poglavlje05.syntaxtree.visitor.Visitor;
 
 public class ClassDeclExtends extends ClassDecl {
@@ -21,5 +23,10 @@ public class ClassDeclExtends extends ClassDecl {
     @Override
     public void accept(Visitor v) {
         v.visit(this);
+    }
+
+    @Override
+    public Type accept(TypeVisitor v) {
+        return v.visit(this);
     }
 }
