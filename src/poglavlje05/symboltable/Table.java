@@ -1,7 +1,7 @@
 package poglavlje05.symboltable;
 
 public class Table {
-    private java.util.Dictionary dict = new java.util.Hashtable<>();
+    private java.util.Dictionary<Symbol, Bucket> dict = new java.util.Hashtable<>();
     private Symbol top;
     private Bucket marks;
 
@@ -9,12 +9,12 @@ public class Table {
     }
 
     public void put(Symbol key, Object value) {
-        dict.put(key, new Bucket(top, value, (Bucket)dict.get(key)));
+        dict.put(key, new Bucket(top, value, dict.get(key)));
         top = key;
     }
 
     public Object get(Symbol key) {
-        Bucket value = (Bucket)dict.get(key);
+        Bucket value = dict.get(key);
         if (null != value) {
             return value.binding;
         }
@@ -28,7 +28,7 @@ public class Table {
 
     public void endScope() {
         while (null != top) {
-            Bucket value = (Bucket) dict.get(top);
+            Bucket value = dict.get(top);
             if (null != value.next) {
                 dict.put(top, value.next);
             }
