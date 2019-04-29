@@ -3,6 +3,7 @@ package poglavlje04;
 import poglavlje04.parsetree.MiniJavaParser;
 import poglavlje04.parsetree.ParseException;
 import poglavlje04.syntaxtree.Program;
+import poglavlje04.syntaxtree.visitor.PrettyPrintVisitor;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,6 +25,8 @@ public class Main {
 
             Program p = new MiniJavaParser(new FileInputStream(testFile.get().toFile())).Parse();
             System.out.println("Abstract syntax tree successfully created");
+
+            p.accept(new PrettyPrintVisitor());
         }
         catch (ParseException e) {
             System.out.println("Parser Error : \n"+ e.toString());
