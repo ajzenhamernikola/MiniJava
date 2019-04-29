@@ -1,7 +1,7 @@
 package poglavlje04.syntaxtree;
 
 public class Identifier {
-    String identifier;
+    public String identifier;
 
     public Identifier(String identifier) {
         this.identifier = identifier;

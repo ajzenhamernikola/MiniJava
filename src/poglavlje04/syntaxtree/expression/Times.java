@@ -1,8 +1,8 @@
 package poglavlje04.syntaxtree.expression;
 
 public class Times extends Exp {
-    Exp left;
-    Exp right;
+    public Exp left;
+    public Exp right;
 
     public Times(Exp left, Exp right) {
         this.left = left;

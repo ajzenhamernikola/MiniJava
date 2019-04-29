@@ -1,8 +1,8 @@
 package poglavlje04.syntaxtree.expression;
 
 public class ArrayLookup extends Exp {
-    Exp arrayExp;
-    Exp indexExp;
+    public Exp arrayExp;
+    public Exp indexExp;
 
     public ArrayLookup(Exp arrayExp, Exp indexExp) {
         this.arrayExp = arrayExp;
