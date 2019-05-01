@@ -3,6 +3,7 @@ package poglavlje05;
 import poglavlje05.syntaxtree.Program;
 import poglavlje05.parsetree.MiniJavaParser;
 import poglavlje05.parsetree.ParseException;
+import poglavlje05.syntaxtree.visitor.BuildSymbolTableTypeVisitor;
 import poglavlje05.syntaxtree.visitor.PrettyPrintVisitor;
 
 import java.io.FileInputStream;
@@ -24,12 +25,17 @@ public class Main {
             assert testFile.isPresent();
 
             Program p = new MiniJavaParser(new FileInputStream(testFile.get().toFile())).Parse();
-            System.out.println("Abstract syntax tree successfully created");
-
             p.accept(new PrettyPrintVisitor());
+
+            System.out.print("\n\n");
+
+            BuildSymbolTableTypeVisitor buildSymbolTableTypeVisitor = new BuildSymbolTableTypeVisitor();
+            p.accept(buildSymbolTableTypeVisitor);
+
+            buildSymbolTableTypeVisitor.getErrReport().printErrorReport();
         }
         catch (ParseException e) {
-            System.out.println("Parser Error : \n"+ e.toString());
+            System.out.println("Parser Error : \n" + e.toString());
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

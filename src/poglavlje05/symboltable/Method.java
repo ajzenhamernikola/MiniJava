@@ -12,7 +12,7 @@ public class Method {
     private Vector<Variable> params;
     private Hashtable<Symbol, Variable> vars;
 
-    Method(Symbol id, Type type) {
+    public Method(Symbol id, Type type) {
         this.id = id;
         this.type = type;
         vars = new Hashtable<>();
