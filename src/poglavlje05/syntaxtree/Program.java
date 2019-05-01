@@ -2,8 +2,8 @@ package poglavlje05.syntaxtree;
 
 import poglavlje05.syntaxtree.classdecl.ClassDeclList;
 import poglavlje05.syntaxtree.type.Type;
-import poglavlje05.syntaxtree.visitor.TypeVisitor;
-import poglavlje05.syntaxtree.visitor.Visitor;
+import poglavlje05.visitor.TypeVisitor;
+import poglavlje05.visitor.Visitor;
 
 public class Program {
     public MainClass mainClass;

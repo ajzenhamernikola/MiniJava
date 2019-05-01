@@ -1,4 +1,4 @@
-package poglavlje05.syntaxtree.visitor;
+package poglavlje05.visitor;
 
 import poglavlje05.diagnostic.ErrorReport;
 import poglavlje05.symboltable.Class;

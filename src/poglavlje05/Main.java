@@ -3,8 +3,8 @@ package poglavlje05;
 import poglavlje05.syntaxtree.Program;
 import poglavlje05.parsetree.MiniJavaParser;
 import poglavlje05.parsetree.ParseException;
-import poglavlje05.syntaxtree.visitor.BuildSymbolTableTypeVisitor;
-import poglavlje05.syntaxtree.visitor.PrettyPrintVisitor;
+import poglavlje05.visitor.BuildSymbolTableTypeVisitor;
+import poglavlje05.visitor.PrettyPrintVisitor;
 
 import java.io.FileInputStream;
 import java.io.IOException;

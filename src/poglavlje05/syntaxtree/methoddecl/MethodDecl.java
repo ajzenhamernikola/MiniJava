@@ -6,8 +6,8 @@ import poglavlje05.syntaxtree.formal.FormalList;
 import poglavlje05.syntaxtree.statement.StatementList;
 import poglavlje05.syntaxtree.type.Type;
 import poglavlje05.syntaxtree.vardecl.VarDeclList;
-import poglavlje05.syntaxtree.visitor.TypeVisitor;
-import poglavlje05.syntaxtree.visitor.Visitor;
+import poglavlje05.visitor.TypeVisitor;
+import poglavlje05.visitor.Visitor;
 
 public class MethodDecl {
     public Type returnType;

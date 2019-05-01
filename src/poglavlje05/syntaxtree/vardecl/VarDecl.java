@@ -2,8 +2,8 @@ package poglavlje05.syntaxtree.vardecl;
 
 import poglavlje05.syntaxtree.Identifier;
 import poglavlje05.syntaxtree.type.Type;
-import poglavlje05.syntaxtree.visitor.TypeVisitor;
-import poglavlje05.syntaxtree.visitor.Visitor;
+import poglavlje05.visitor.TypeVisitor;
+import poglavlje05.visitor.Visitor;
 
 public class VarDecl {
     public Type varType;

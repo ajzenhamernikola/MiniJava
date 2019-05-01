@@ -4,8 +4,8 @@ import poglavlje05.syntaxtree.Identifier;
 import poglavlje05.syntaxtree.methoddecl.MethodDeclList;
 import poglavlje05.syntaxtree.type.Type;
 import poglavlje05.syntaxtree.vardecl.VarDeclList;
-import poglavlje05.syntaxtree.visitor.TypeVisitor;
-import poglavlje05.syntaxtree.visitor.Visitor;
+import poglavlje05.visitor.TypeVisitor;
+import poglavlje05.visitor.Visitor;
 
 public class ClassDeclSimple extends ClassDecl {
     public Identifier className;

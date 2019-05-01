@@ -1,4 +1,4 @@
-package poglavlje05.syntaxtree.visitor;
+package poglavlje05.visitor;
 
 import poglavlje05.syntaxtree.*;
 import poglavlje05.syntaxtree.classdecl.*;
