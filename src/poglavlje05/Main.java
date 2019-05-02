@@ -5,6 +5,7 @@ import poglavlje05.parsetree.MiniJavaParser;
 import poglavlje05.parsetree.ParseException;
 import poglavlje05.visitor.BuildSymbolTableTypeVisitor;
 import poglavlje05.visitor.PrettyPrintVisitor;
+import poglavlje05.visitor.TypeCheckDFVisitor;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,6 +42,13 @@ public class Main {
             BuildSymbolTableTypeVisitor buildSymbolTableTypeVisitor = new BuildSymbolTableTypeVisitor();
             p.accept(buildSymbolTableTypeVisitor);
             buildSymbolTableTypeVisitor.getErrReport().printErrorReport();
+
+            System.out.print("\n\n");
+
+            // Typechecking
+            TypeCheckDFVisitor typeCheckDFVisitor = new TypeCheckDFVisitor(buildSymbolTableTypeVisitor.getSymbolTable());
+            p.accept(typeCheckDFVisitor);
+            typeCheckDFVisitor.getErrorReport().printErrorReport();
         }
         catch (ParseException e) {
             System.out.println("Parser Error : \n" + e.toString());

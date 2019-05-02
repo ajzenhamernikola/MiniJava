@@ -29,5 +29,7 @@ public class ErrorReport {
             System.out.println(s);
             System.out.println();
         }
+
+        System.exit(-1);
     }
 }
