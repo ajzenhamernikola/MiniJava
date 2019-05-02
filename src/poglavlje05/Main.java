@@ -22,16 +22,24 @@ public class Main {
                             .filter(f -> f.getFileName().toString().contains("TestFac2.java"))
                             .findFirst();
 
-            assert testFile.isPresent();
+            if (!testFile.isPresent()) {
+                System.out.println("Could not find the test file");
+                System.exit(1);
+            }
 
-            Program p = new MiniJavaParser(new FileInputStream(testFile.get().toFile())).Parse();
+            // Initializing the static parser
+            new MiniJavaParser(new FileInputStream(testFile.get().toFile()));
+            // Parsing the file
+            Program p = MiniJavaParser.Parse();
+
+            // Printing the parsed information
             p.accept(new PrettyPrintVisitor());
 
             System.out.print("\n\n");
 
+            // Building a symbol table
             BuildSymbolTableTypeVisitor buildSymbolTableTypeVisitor = new BuildSymbolTableTypeVisitor();
             p.accept(buildSymbolTableTypeVisitor);
-
             buildSymbolTableTypeVisitor.getErrReport().printErrorReport();
         }
         catch (ParseException e) {
