@@ -1,0 +1,565 @@
+// vim: syntax=java
+
+PARSER_BEGIN(MiniJavaParser)
+
+package poglavlje06.parsetree;
+
+import poglavlje06.syntaxtree.*;
+import poglavlje06.syntaxtree.classdecl.*;
+import poglavlje06.syntaxtree.expression.*;
+import poglavlje06.syntaxtree.formal.*;
+import poglavlje06.syntaxtree.methoddecl.*;
+import poglavlje06.syntaxtree.statement.*;
+import poglavlje06.syntaxtree.type.*;
+import poglavlje06.syntaxtree.vardecl.*;
+
+public class MiniJavaParser {
+
+}
+PARSER_END(MiniJavaParser)
+
+// LEXER
+
+TOKEN : {
+    // Keywords
+    <CLASS: "class">
+    | <PUBLIC: "public">
+    | <STATIC: "static">
+    | <VOID: "void">
+    | <MAIN: "main">
+    | <STRING: "String">
+    | <EXTENDS: "extends">
+    | <RETURN: "return">
+    | <INT: "int">
+    | <BOOLEAN: "boolean">
+    | <IF: "if">
+    | <ELSE: "else">
+    | <WHILE: "while">
+    | <PRINT: "System.out.println">
+    | <TRUE: "true">
+    | <FALSE: "false">
+    | <THIS: "this">
+    | <NEW: "new">
+    | <LENGTH: "length">
+    | <PACKAGEDECL: "package">
+    // Punctuation
+    | <SEMICOLON: ";">
+    | <DOT: ".">
+    | <COMMA: ",">
+    | <LPAREN: "(">
+    | <RPAREN: ")">
+    | <LBRACE: "{">
+    | <RBRACE: "}">
+    | <LSQUARE: "[">
+    | <RSQUARE: "]">
+    // Helpers
+    | <#LETTER: ["a"-"z","A"-"Z"]>
+    | <#DIGIT: ["0"-"9"]>
+    // Constructs
+    | <ID: <LETTER>(<LETTER>|<DIGIT>|"_")*>
+    | <PLUS: "+">
+    | <MINUS: "-">
+    | <TIMES: "*">
+    | <DIV: "/">
+    | <LESSTHAN: "<">
+    | <NOT: "!">
+    | <ASSIGN: "=">
+    | <INTEGER_LITERAL: (<DIGIT>)+ >
+}
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+|
+  <"/**" ~["/"]> { input_stream.backup(1); } : IN_FORMAL_COMMENT
+|
+  "/*" : IN_MULTI_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <FORMAL_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+SKIP : {
+      " "
+    | "\t"
+    | "\n"
+    | "\r"
+}
+
+// PARSER
+
+Program Parse():
+{
+    Program p;
+}
+{
+    p=Program() <EOF> { return p; }
+}
+
+Program Program():
+{
+    MainClass m;
+    ClassDeclList c;
+}
+{
+    // Ignoring package declaration for now since it's not in the MiniJava grammar
+    PackageDecl() <SEMICOLON>
+
+    m=MainClass()
+    c=ClassDeclList() { return new Program(m, c); }
+}
+
+ClassDeclList ClassDeclList():
+{
+    ClassDeclList cList = new ClassDeclList();
+    ClassDecl c;
+}
+{
+    (c = ClassDecl() { cList.add(c); } )* { return cList; }
+}
+
+void PackageDecl():
+{}
+{
+    <PACKAGEDECL> <ID>
+}
+
+MainClass MainClass():
+{
+    Identifier className;
+    Identifier argsName;
+    Statement mainBody;
+}
+{
+    <CLASS> className=Identifier() <LBRACE>
+        <PUBLIC> <STATIC> <VOID> <MAIN> <LPAREN> <STRING> <LSQUARE> <RSQUARE> argsName=Identifier() <RPAREN> <LBRACE>
+            mainBody=Statement()
+        <RBRACE>
+    <RBRACE> { return new MainClass(className, argsName, mainBody); }
+}
+
+Identifier Identifier():
+{
+    Token t;
+}
+{
+    t=<ID> { return new Identifier(t.image); }
+}
+
+ClassDecl ClassDecl():
+{
+    ClassDecl c;
+}
+{
+    (LOOKAHEAD(<CLASS> <ID> <LBRACE>) c=ClassDeclSimple()
+    | LOOKAHEAD(<CLASS> <ID> <EXTENDS>) c=ClassDeclExtends()) { return c; }
+}
+
+ClassDecl ClassDeclSimple():
+{
+    Identifier className;
+    VarDeclList v;
+    MethodDeclList m;
+}
+{
+    <CLASS> className=Identifier() <LBRACE>
+        v=VarDeclList()
+        m=MethodDeclList()
+    <RBRACE> { return new ClassDeclSimple(className, v, m); }
+}
+
+ClassDecl ClassDeclExtends():
+{
+    Identifier className;
+    Identifier superName;
+    VarDeclList v;
+    MethodDeclList m;
+}
+{
+    <CLASS> className=Identifier() <EXTENDS> superName=Identifier() <LBRACE>
+        v=VarDeclList()
+        m=MethodDeclList()
+    <RBRACE> { return new ClassDeclExtends(className, superName, v, m); }
+}
+
+VarDeclList VarDeclList():
+{
+    VarDeclList vList = new VarDeclList();
+    VarDecl v;
+}
+{
+    (LOOKAHEAD(2) v = VarDecl() { vList.add(v); } )* { return vList; }
+}
+
+VarDecl VarDecl():
+{
+    Type t;
+    Identifier varId;
+}
+{
+    t=Type() varId=Identifier() <SEMICOLON> { return new VarDecl(t, varId); }
+}
+
+MethodDeclList MethodDeclList():
+{
+    MethodDeclList mList = new MethodDeclList();
+    MethodDecl m;
+}
+{
+    (LOOKAHEAD(<PUBLIC>) m = MethodDecl() { mList.add(m); } )* { return mList; }
+}
+
+MethodDecl MethodDecl():
+{
+    Type returnType;
+    Identifier methodName;
+    FormalList args;
+    VarDeclList v;
+    StatementList s;
+    Exp returnVal;
+}
+{
+    <PUBLIC> returnType=Type() methodName=Identifier() <LPAREN> args=FormalList() <RPAREN> <LBRACE>
+        v=VarDeclList()
+        s=StatementList()
+
+        <RETURN> returnVal=Exp() <SEMICOLON>
+    <RBRACE> { return new MethodDecl(returnType, methodName, args, v, s, returnVal); }
+}
+
+FormalList FormalList():
+{
+    FormalList fList = new FormalList();
+    Formal f;
+}
+{
+    (f=Formal() { fList.add(f); } (<COMMA> f=Formal() { fList.add(f); })*)? { return fList; }
+}
+
+Formal Formal():
+{
+    Type argType;
+    Identifier argId;
+}
+{
+    argType=Type() argId=Identifier() { return new Formal(argType, argId); }
+}
+
+Type Type():
+{
+    Type t;
+}
+{
+    (LOOKAHEAD(2) t=IntArrayType()
+     | t=IntType()
+     | t=BooleanType()
+     | t=IdentifierType()) { return t; }
+}
+
+Type IntArrayType():
+{}
+{
+    <INT> <LSQUARE> <RSQUARE> { return new IntArrayType(); }
+}
+
+Type IntType():
+{}
+{
+    <INT> { return new IntType(); }
+}
+
+Type BooleanType():
+{}
+{
+    <BOOLEAN> { return new BooleanType(); }
+}
+
+Type IdentifierType():
+{
+    Token t;
+}
+{
+    t=<ID> { return new IdentifierType(t.image); }
+}
+
+StatementList StatementList():
+{
+    StatementList sList = new StatementList();
+    Statement s;
+}
+{
+    ( s = Statement() { sList.add(s); } )* { return sList; }
+}
+
+Statement Statement():
+{
+    Statement s;
+}
+{
+    (s=Block()
+     | s=If()
+     | s=While()
+     | s=Print()
+     | LOOKAHEAD(<ID> <ASSIGN>) s=Assign()
+     | s=ArrayAssign()) { return s; }
+}
+
+Statement Block():
+{
+    StatementList sList;
+}
+{
+    <LBRACE> sList=StatementList() <RBRACE> { return new Block(sList); }
+}
+
+Statement If():
+{
+    Exp condition;
+    Statement trueBranch;
+    Statement falseBranch;
+}
+{
+    <IF> <LPAREN> condition=Exp() <RPAREN> trueBranch=Statement() <ELSE> falseBranch=Statement()
+    { return new If(condition, trueBranch, falseBranch); }
+}
+
+Statement While():
+{
+    Exp condition;
+    Statement loopBody;
+}
+{
+    <WHILE> <LPAREN> condition=Exp() <RPAREN> loopBody=Statement()
+    { return new While(condition, loopBody); }
+}
+
+Statement Print():
+{
+    Exp e;
+}
+{
+    <PRINT> <LPAREN> e=Exp() <RPAREN> <SEMICOLON> { return new Print(e); }
+}
+
+Statement Assign():
+{
+    Identifier lValue;
+    Exp rValue;
+}
+{
+    lValue=Identifier() <ASSIGN> rValue=Exp() <SEMICOLON> { return new Assign(lValue, rValue); }
+}
+
+Statement ArrayAssign():
+{
+    Identifier arrayId;
+    Exp indexValue;
+    Exp rValue;
+}
+{
+    arrayId=Identifier() <LSQUARE> indexValue=Exp() <RSQUARE> rValue=Exp() <SEMICOLON>
+    { return new ArrayAssign(arrayId, indexValue, rValue); }
+}
+
+ExpList ExpList():
+{
+    ExpList eList = new ExpList();
+    Exp e;
+}
+{
+    (e=Exp() { eList.add(e); } (<COMMA> e=Exp() { eList.add(e); })*)? { return eList; }
+}
+
+Exp Exp():
+{
+    Exp e;
+    Exp ePrime;
+}
+{
+    (e=IntegerLiteral() ePrime=ExpPrime(e)
+     | e=True() ePrime=ExpPrime(e)
+     | e=False() ePrime=ExpPrime(e)
+     | e=IdentifierExp() ePrime=ExpPrime(e)
+     | e=This() ePrime=ExpPrime(e)
+     | LOOKAHEAD(<NEW> <INT>) e=NewArray() ePrime=ExpPrime(e)
+     | e=NewObject() ePrime=ExpPrime(e)
+     | e=Not() ePrime=ExpPrime(e)
+     | e=ParentExp() ePrime=ExpPrime(e)) { return ePrime; }
+}
+
+Exp IntegerLiteral():
+{
+    Token t;
+}
+{
+    t=<INTEGER_LITERAL> { return new IntegerLiteral(Integer.parseInt(t.image)); }
+}
+
+Exp True():
+{}
+{
+    <TRUE> { return new True(); }
+}
+
+Exp False():
+{}
+{
+    <FALSE>  { return new False(); }
+}
+
+Exp IdentifierExp():
+{
+    Token t;
+}
+{
+    t=<ID> { return new IdentifierExp(t.image); }
+}
+
+Exp This():
+{}
+{
+    <THIS> { return new This(); }
+}
+
+Exp NewArray():
+{
+    Exp e;
+}
+{
+    <NEW> <INT> <LSQUARE> e=Exp() <RSQUARE> { return new NewArray(e); }
+}
+
+Exp NewObject():
+{
+    Identifier className;
+}
+{
+    <NEW> className=Identifier() <LPAREN> <RPAREN> { return new NewObject(className); }
+}
+
+Exp Not():
+{
+    Exp e;
+}
+{
+    <NOT> e=Exp() { return new Not(e); }
+}
+
+Exp ParentExp():
+{
+    Exp e;
+}
+{
+    <LPAREN> e=Exp() <RPAREN> { return e; }
+}
+
+Exp ExpPrime(Exp e1):
+{
+    Exp e2 = null;
+    Exp e3 = null;
+}
+{
+    (e2=ExpPrimePlus(e1) e3=ExpPrime(e2)
+    | e2=ExpPrimeMinus(e1) e3=ExpPrime(e2)
+    | e2=ExpPrimeTimes(e1) e3=ExpPrime(e2)
+    | e2=ExpPrimeDiv(e1) e3=ExpPrime(e2)
+    | e2=ExpPrimeLessThan(e1) e3=ExpPrime(e2)
+    | e2=ExpPrimeArrayLookup(e1) e3=ExpPrime(e2)
+    | LOOKAHEAD(<DOT> <LENGTH>) e2=ExpPrimeArrayLength(e1) e3=ExpPrime(e2)
+    | e2=ExpPrimeCall(e1) e3=ExpPrime(e2))?
+    {
+        if (null != e3)
+        {
+            return e3;
+        }
+        if (null != e2)
+        {
+            return e2;
+        }
+        return e1;
+    }
+}
+
+Exp ExpPrimePlus(Exp e1):
+{
+    Exp e2;
+}
+{
+    <PLUS> e2=Exp() { return new Plus(e1, e2); }
+}
+
+Exp ExpPrimeMinus(Exp e1):
+{
+    Exp e2;
+}
+{
+    <MINUS> e2=Exp() { return new Minus(e1, e2); }
+}
+
+Exp ExpPrimeTimes(Exp e1):
+{
+    Exp e2;
+}
+{
+    <TIMES> e2=Exp() { return new Times(e1, e2); }
+}
+
+Exp ExpPrimeDiv(Exp e1):
+{
+    Exp e2;
+}
+{
+    <DIV> e2=Exp() { return new Div(e1, e2); }
+}
+
+Exp ExpPrimeLessThan(Exp e1):
+{
+    Exp e2;
+}
+{
+    <LESSTHAN> e2=Exp() { return new LessThan(e1, e2); }
+}
+
+Exp ExpPrimeArrayLookup(Exp e1):
+{
+    Exp e2;
+}
+{
+    <LSQUARE> e2=Exp() <RSQUARE> { return new ArrayLookup(e1, e2); }
+}
+
+Exp ExpPrimeArrayLength(Exp e1):
+{}
+{
+    <DOT> <LENGTH> { return new ArrayLength(e1); }
+}
+
+Exp ExpPrimeCall(Exp e1):
+{
+    Identifier methodName;
+    ExpList argsList;
+}
+{
+    <DOT> methodName=Identifier() <LPAREN> argsList=ExpList() <RPAREN> { return new Call(e1, methodName, argsList); }
+}
